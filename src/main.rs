@@ -7,7 +7,6 @@ fn main() {
         .about("Decompile APK for Android")
         .arg(
             Arg::new("file")
-                // .short('f')
                 .action(ArgAction::Set)
                 .index(1)
                 .default_value("-")
@@ -19,7 +18,7 @@ fn main() {
         )
         .get_matches();
 
-    if let Some(c) = matches.get_one::<String>("file") {
-        println!("begin decompile file:{}", c);
+    if let Some(file) = matches.get_one::<String>("file") {
+        println!("begin decompile file:{}", file);
     }
 }
