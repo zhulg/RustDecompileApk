@@ -24,5 +24,8 @@ fn main() {
         println!("begin decompile file:{}", file_path);
         let apk_path = PathBuf::from(file_path);
         let apk_decompiler = Decompiler::new(apk_path);
+        apk_decompiler.create_output_dir();
+        apk_decompiler.start_dex2jar();
+        apk_decompiler.start_decompile_class();
     }
 }
