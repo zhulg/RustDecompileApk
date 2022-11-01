@@ -1,5 +1,7 @@
+mod ApkDecompiler;
+use crate::ApkDecompiler::Decompiler;
 use clap::{Arg, ArgAction, Command};
-
+use std::path::PathBuf;
 fn main() {
     let matches = Command::new("Decompile APK")
         .author("lg.json@gmail.com")
@@ -19,7 +21,9 @@ fn main() {
         )
         .get_matches();
 
-    if let Some(c) = matches.get_one::<String>("file") {
-        println!("begin decompile file:{}", c);
+    if let Some(file_path) = matches.get_one::<String>("file") {
+        println!("begin decompile file:{}", file_path);
+        let apk_path = PathBuf::from(file_path);
+        let apk_decompiler = Decompiler::new(apk_path);
     }
 }
