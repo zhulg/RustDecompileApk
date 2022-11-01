@@ -20,12 +20,16 @@ fn main() {
         )
         .get_matches();
 
-    if let Some(file_path) = matches.get_one::<String>("file") {
-        println!("begin decompile file:{}", file_path);
-        let apk_path = PathBuf::from(file_path);
-        let apk_decompiler = Decompiler::new(apk_path);
-        apk_decompiler.create_output_dir();
-        apk_decompiler.start_dex2jar();
-        apk_decompiler.start_decompile_class();
-    }
+    let file_path = match matches.get_one::<String>("file") {
+        Some(it) => it,
+        _ => return,
+    };
+    println!("begin decompile file:{}", file_path);
+    let apk_path = PathBuf::from(file_path);
+    let apk_decompiler = Decompiler::new(apk_path);
+    apk_decompiler.create_output_dir();
+    apk_decompiler.start_dex2jar();
+    apk_decompiler.start_decompile_class();
+    apk_decompiler.start_decompile_res();
+    apk_decompiler.open_output();
 }

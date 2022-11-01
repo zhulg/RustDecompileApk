@@ -2,12 +2,10 @@ use std::{
     env,
     fs::{self, create_dir},
     io::Result,
+    os::unix::process::CommandExt,
     path::PathBuf,
     process::Command,
-    sync::Arc,
 };
-
-use clap::Arg;
 
 pub struct Decompiler {
     apk_path: PathBuf,
@@ -50,27 +48,50 @@ impl Decompiler {
     }
 
     /// use jd-cli decompile jar to class
+    /// TODO: some apk decompile error...
     pub fn start_decompile_class(&self) -> Result<()> {
         println!("begin decompile class...");
         let jar_file = self.output_path.join("app.jar");
-
         Command::new("sh")
             .arg(self.exe_dir.join("lib/jd-cli/jd-cli"))
             .arg("-od")
             .arg(&self.output_path.join("classes"))
             .arg(&jar_file)
-            .output()?;
+            .output()
+            .expect("failed to execute process decompile class");
         println!("decompile class...done");
         fs::remove_file(jar_file)?;
         Ok(())
     }
 
+    pub fn start_decompile_res(&self) -> Result<()> {
+        println!("begin decompile Resource...");
+        Command::new(self.exe_dir.join("lib/apktool/apktool"))
+            .arg("d")
+            .arg(&self.apk_path)
+            .arg("-o")
+            .arg(self.output_path.join("Resource"))
+            .output()?;
+
+        println!("Decompile Resource ... done");
+        Ok(())
+    }
+
+    //// create output dir
     pub fn create_output_dir(&self) -> Result<()> {
         if self.output_path.exists() {
             fs::remove_dir_all(&self.output_path)?;
         }
         fs::create_dir(&self.output_path)?;
         println!("create output:={}", &self.output_path.display());
+        Ok(())
+    }
+
+    pub fn open_output(&self) -> Result<()> {
+        Command::new("open").arg(&self.output_path).output()?;
+        // .spawn()
+        // .expect("ls command failed to start");
+
         Ok(())
     }
 }
