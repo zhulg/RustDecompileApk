@@ -49,7 +49,7 @@ impl Decompiler {
         Ok(())
     }
 
-    ///Users/zhulianggang/Downloads/jd-cli-jd-cli-1.2.1/jd-cli/src/main/bin/jd-cli  -od ./decompiled  /Users/zhulianggang/test/test/test/app.jar
+    /// use jd-cli decompile jar to class
     pub fn start_decompile_class(&self) -> Result<()> {
         println!("begin decompile class...");
         let jar_file = self.output_path.join("app.jar");
