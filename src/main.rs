@@ -9,7 +9,6 @@ fn main() {
         .about("Decompile APK for Android")
         .arg(
             Arg::new("file")
-                // .short('f')
                 .action(ArgAction::Set)
                 .index(1)
                 .default_value("-")
