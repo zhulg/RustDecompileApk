@@ -1,6 +1,7 @@
 mod ApkDecompiler;
 use crate::ApkDecompiler::Decompiler;
 use clap::{Arg, ArgAction, Command};
+use console::style;
 use std::path::PathBuf;
 fn main() {
     let matches = Command::new("Decompile APK")
@@ -24,12 +25,12 @@ fn main() {
         Some(it) => it,
         _ => return,
     };
-    println!("begin decompile file:{}", file_path);
     let apk_path = PathBuf::from(file_path);
     let apk_decompiler = Decompiler::new(apk_path);
-    apk_decompiler.create_output_dir();
-    apk_decompiler.start_dex2jar();
-    apk_decompiler.start_decompile_class();
-    apk_decompiler.start_decompile_res();
-    apk_decompiler.open_output();
+
+    if let Err(e) = apk_decompiler.check_apk_path() {
+        eprintln!("{}", style(format!("  Error: {}", e.to_string())).red());
+    } else {
+        apk_decompiler.start_decompile().unwrap();
+    }
 }
