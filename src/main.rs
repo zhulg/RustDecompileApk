@@ -1,5 +1,5 @@
-mod ApkDecompiler;
-use crate::ApkDecompiler::Decompiler;
+mod apkdecompiler;
+use crate::apkdecompiler::Decompiler;
 use clap::{Arg, ArgAction, Command};
 use console::style;
 use std::path::PathBuf;

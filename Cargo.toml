@@ -1,5 +1,5 @@
 [package]
-name = "RustDecompileApk"
+name = "rust_decompile_apk"
 version = "0.1.0"
 edition = "2021"
 

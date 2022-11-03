@@ -94,7 +94,7 @@ impl Decompiler {
             println!(
                 "{}",
                 style(format!(
-                    "begin del old output file...in{}",
+                    "begin del old file...in {}",
                     &self.output_path.display()
                 ))
                 .yellow()
@@ -105,7 +105,11 @@ impl Decompiler {
         fs::create_dir(&self.output_path)?;
         println!(
             "{}",
-            style(format!("create ouput:{}", &self.output_path.display())).green()
+            style(format!(
+                "\u{2705} create ouput:{}",
+                &self.output_path.display()
+            ))
+            .green()
         );
         Ok(())
     }
@@ -147,9 +151,16 @@ impl Decompiler {
 fn execute_state(mut command: Command, command_name: &str) {
     if let Some(exit_code) = command.execute().unwrap() {
         if exit_code == 0 {
-            println!("{}", style(format!("{}...done", command_name)).green());
+            // https://www.compart.com/en/unicode/U+2705
+            println!(
+                "{}",
+                style(format!("\u{2705} {}...done", command_name)).green()
+            );
         } else {
-            eprintln!("{}", style(format!("{}...failed", command_name)).red());
+            eprintln!(
+                "{}",
+                style(format!("\u{2757} {}...failed", command_name)).red()
+            );
         }
     } else {
         eprintln!("{}{}", command_name, style("..Interrupted!").yellow());
