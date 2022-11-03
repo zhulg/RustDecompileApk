@@ -8,6 +8,7 @@ use std::{
 
 use console::style;
 use execute::Execute;
+use text2art::{BasicFonts, Font, Printer};
 
 pub struct Decompiler {
     apk_path: PathBuf,
@@ -18,10 +19,9 @@ pub struct Decompiler {
 impl Decompiler {
     pub fn new(apk_path: PathBuf) -> Self {
         let current_dir = env::current_dir().unwrap();
-        println!("current_dir={}", current_dir.display());
         let mut exe_dir = env::current_exe().unwrap();
-        println!("exe_dir={}", exe_dir.display());
         exe_dir.pop();
+
         let output_path = current_dir.join("output");
         Self {
             apk_path,
@@ -31,6 +31,7 @@ impl Decompiler {
     }
 
     pub fn start_decompile(&self) -> Result<()> {
+        self.show_tools_info()?;
         self.create_output_dir()?;
         self.start_dex2jar()?;
         self.start_decompile_class()?;
@@ -90,11 +91,22 @@ impl Decompiler {
     //// create output dir
     pub fn create_output_dir(&self) -> Result<()> {
         if self.output_path.exists() {
-            println!("del output:={}", &self.output_path.display());
+            println!(
+                "{}",
+                style(format!(
+                    "begin del old output file...in{}",
+                    &self.output_path.display()
+                ))
+                .yellow()
+            );
+
             fs::remove_dir_all(&self.output_path)?;
         }
         fs::create_dir(&self.output_path)?;
-        println!("create output:={}", &self.output_path.display());
+        println!(
+            "{}",
+            style(format!("create ouput:{}", &self.output_path.display())).green()
+        );
         Ok(())
     }
 
@@ -111,6 +123,17 @@ impl Decompiler {
                 "check your apk path or file is exists, use: ApkDecompiler -f xxxx.apk or ApkDecompiler xxxx.apk",
             ))
         }
+    }
+
+    ///
+    pub fn show_tools_info(&self) -> Result<()> {
+        let font = match Font::from_basic(BasicFonts::Big) {
+            Ok(font) => font,
+            Err(_) => panic!("something wrong with font"),
+        };
+        let prntr = Printer::with_font(font);
+        prntr.print_to_stdio("Spark Decompiler").ok();
+        Ok(())
     }
 
     /// open dir
