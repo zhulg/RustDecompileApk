@@ -7,11 +7,12 @@ fn main() {
     let matches = Command::new("Decompile APK")
         .author("lg.json@gmail.com")
         .version("1.0.0")
-        .about("Decompile APK for Android")
+        .about("ApkDecompiler for Android, create by Spark Coding BU")
         .arg(
             Arg::new("file")
                 .action(ArgAction::Set)
-                .index(1)
+                .short('f')
+                .long("file")
                 .default_value("-")
                 .help("The path to your apk."),
         )
