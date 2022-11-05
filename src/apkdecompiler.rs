@@ -8,6 +8,8 @@ use std::{
 
 use console::style;
 use execute::Execute;
+use indicatif::{ProgressBar, ProgressStyle};
+use std::time::Duration;
 use text2art::{BasicFonts, Font, Printer};
 
 pub struct Decompiler {
@@ -43,7 +45,6 @@ impl Decompiler {
 
     ///use dex2jar get APK's jar in output_path
     pub fn start_dex2jar(&self) -> Result<()> {
-        println!("begin dex2jar...");
         let mut command = Command::new("sh");
 
         command
@@ -60,7 +61,6 @@ impl Decompiler {
     /// use jd-cli decompile jar to class
     /// TODO: some apk decompile error...
     pub fn start_decompile_class(&self) -> Result<()> {
-        println!("begin decompile class...");
         let jar_file = self.output_path.join("app.jar");
         let mut command = Command::new("sh");
         command
@@ -75,7 +75,6 @@ impl Decompiler {
 
     /// use apktool decompile resources
     pub fn start_decompile_res(&self) -> Result<()> {
-        println!("begin decompile Resource...");
         let mut command = Command::new("sh");
         command
             .arg(self.exe_dir.join("lib/apktool/apktool"))
@@ -149,20 +148,31 @@ impl Decompiler {
 
 /// execute state show
 fn execute_state(mut command: Command, command_name: &str) {
+    let pb = ProgressBar::new_spinner();
+    pb.enable_steady_tick(Duration::from_millis(125));
+    pb.set_style(
+        ProgressStyle::with_template("{spinner:.green} {msg}")
+            .unwrap()
+            .tick_strings(&["∙∙∙", "●∙∙", "∙●∙", "∙∙●", "∙∙∙"]),
+    );
+    pb.set_message(format!("do {}...", command_name.to_string()));
     if let Some(exit_code) = command.execute().unwrap() {
         if exit_code == 0 {
+            pb.finish_and_clear();
             // https://www.compart.com/en/unicode/U+2705
             println!(
                 "{}",
                 style(format!("\u{2705} {}...done", command_name)).green()
             );
         } else {
+            pb.finish_and_clear();
             eprintln!(
                 "{}",
                 style(format!("\u{2757} {}...failed", command_name)).red()
             );
         }
     } else {
+        pb.finish_and_clear();
         eprintln!("{}{}", command_name, style("..Interrupted!").yellow());
     }
 }
