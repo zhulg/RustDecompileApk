@@ -123,7 +123,7 @@ impl Decompiler {
         } else {
             Err(Error::new(
                 ErrorKind::NotFound,
-                "check your apk path or file is exists, use: ApkDecompiler -f xxxx.apk or ApkDecompiler xxxx.apk",
+                "check your apk path or file is exists, use: ApkDecompiler -f xxxx.apk",
             ))
         }
     }
